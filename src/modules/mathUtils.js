@@ -48,4 +48,4 @@ function permutations(n, k) {
     return factorial(n) / factorial(n - k);
 }
 
-module.exports = { factorial, summation, combinations, permutations };
+export default { factorial, summation, combinations, permutations };

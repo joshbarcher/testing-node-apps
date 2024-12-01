@@ -11,7 +11,10 @@ function jsonToCsv(json) {
     const headers = Object.keys(array[0]);
     const csv = [
         headers.join(','), // Header row
-        ...array.map(row => headers.map(field => JSON.stringify(row[field] || '')).join(',')) // Data rows
+        ...array.map(row => headers.map(field => JSON.stringify(row[field] || '')
+            .replace(/^['"]+|['"]+$/g, '')) //replace surrounding quotes
+            .join(',')
+        ) // Data rows
     ].join('\n');
     return csv;
 }
@@ -27,7 +30,7 @@ function csvToJson(csv) {
     const headers = headerLine.split(',');
     return rows.map(row =>
         row.split(',').reduce((acc, value, index) => {
-            acc[headers[index]] = value;
+            acc[headers[index]] = value.replace(/^['"]+|['"]+$/g, ''); //replace surrounding quotes
             return acc;
         }, {})
     );
@@ -51,7 +54,7 @@ async function jsonToXml(json) {
  * @returns {Promise<Object>} - A promise that resolves to the JSON object.
  */
 async function xmlToJson(xml) {
-    const parser = new xml2js.Parser();
+    const parser = new xml2js.Parser({explicitArray : false});
     return parser.parseStringPromise(xml);
 }
 
